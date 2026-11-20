@@ -285,12 +285,7 @@ class WidgetProvider : AppWidgetProvider() {
     private fun RemoteViews.setupBar(uiSettings: UISettings): RemoteViews {
         // Below API 31, enable a rounded bar only if round mode is enabled.
         // On API 31+, the bar should always be round in order to fit in with other widgets.
-        val background =
-            if (useRoundedRemoteViews(uiSettings)) {
-                R.drawable.ui_widget_bg_round
-            } else {
-                R.drawable.ui_widget_bg_sharp
-            }
+        val background = widgetBackground(uiSettings)
         setBackgroundResource(R.id.widget_controls, background)
         return this
     }
@@ -303,14 +298,35 @@ class WidgetProvider : AppWidgetProvider() {
         // Below API 31, enable a rounded background only if round mode is enabled.
         // On API 31+, the background should always be round in order to fit in with other
         // widgets.
-        val background =
-            if (useRoundedRemoteViews(uiSettings)) {
-                R.drawable.ui_widget_bg_round
-            } else {
-                R.drawable.ui_widget_bg_sharp
-            }
+        val background = widgetBackground(uiSettings)
         setBackgroundResource(android.R.id.background, background)
         return this
+    }
+
+    /**
+     * Resolve the widget background drawable for the current settings. Honors the user's
+     * widget background opacity by picking a variant whose solid color carries the matching
+     * alpha; the layout's backgroundTint then applies the theme surface color while keeping
+     * that alpha, down to a fully transparent background at 0%.
+     */
+    private fun widgetBackground(uiSettings: UISettings): Int {
+        val rounded = useRoundedRemoteViews(uiSettings)
+        return when {
+            uiSettings.widgetOpacity >= 88 ->
+                if (rounded) R.drawable.ui_widget_bg_round else R.drawable.ui_widget_bg_sharp
+            uiSettings.widgetOpacity >= 63 ->
+                if (rounded) R.drawable.ui_widget_bg_round_a75
+                else R.drawable.ui_widget_bg_sharp_a75
+            uiSettings.widgetOpacity >= 38 ->
+                if (rounded) R.drawable.ui_widget_bg_round_a50
+                else R.drawable.ui_widget_bg_sharp_a50
+            uiSettings.widgetOpacity >= 13 ->
+                if (rounded) R.drawable.ui_widget_bg_round_a25
+                else R.drawable.ui_widget_bg_sharp_a25
+            else ->
+                if (rounded) R.drawable.ui_widget_bg_round_a0
+                else R.drawable.ui_widget_bg_sharp_a0
+        }
     }
 
     /**

@@ -43,10 +43,15 @@ interface UISettings : Settings<UISettings.Listener> {
     var accent: Accent
     /** Whether to round additional UI elements that require album covers to be rounded. */
     val roundMode: Boolean
+    /** The opacity of the home screen widget background, as a percentage (0-100). */
+    val widgetOpacity: Int
 
     interface Listener {
         /** Called when [roundMode] changes. */
         fun onRoundModeChanged()
+
+        /** Called when [widgetOpacity] changes. */
+        fun onWidgetOpacityChanged()
     }
 }
 
@@ -77,6 +82,9 @@ class UISettingsImpl @Inject constructor(@ApplicationContext context: Context) :
     override val roundMode: Boolean
         get() = sharedPreferences.getBoolean(getString(R.string.set_key_round_mode), true)
 
+    override val widgetOpacity: Int
+        get() = sharedPreferences.getInt(getString(R.string.set_key_widget_opacity), 100)
+
     override fun migrate() {
         if (sharedPreferences.contains(OLD_KEY_ACCENT3)) {
             L.d("Migrating $OLD_KEY_ACCENT3")
@@ -101,6 +109,10 @@ class UISettingsImpl @Inject constructor(@ApplicationContext context: Context) :
         if (key == getString(R.string.set_key_round_mode)) {
             L.d("Dispatching round mode setting change")
             listener.onRoundModeChanged()
+        }
+        if (key == getString(R.string.set_key_widget_opacity)) {
+            L.d("Dispatching widget opacity setting change")
+            listener.onWidgetOpacityChanged()
         }
     }
 

@@ -28,4 +28,13 @@
         app:summary="@string/set_round_mode_desc"
         app:title="@string/set_round_mode" />
 
+    <SeekBarPreference
+        app:defaultValue="100"
+        app:key="@string/set_key_widget_opacity"
+        app:max="100"
+        app:min="0"
+        app:showSeekBarValue="true"
+        app:summary="@string/set_widget_opacity_desc"
+        app:title="@string/set_widget_opacity" />
+
 </PreferenceScreen>

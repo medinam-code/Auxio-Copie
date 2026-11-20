@@ -182,6 +182,8 @@ private constructor(
     // Respond to settings changes that will affect the widget
     override fun onRoundModeChanged() = update()
 
+    override fun onWidgetOpacityChanged() = update()
+
     override fun onImageSettingsChanged() = update()
 
     /**
